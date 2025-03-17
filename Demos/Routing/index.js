@@ -40,6 +40,7 @@ app.use(express.json());
     })
 
     app.use(router);
+    //app.use("/tasks", router) permet d'éviter la redondance lors de lécriture des différentes méthodes.
 
 app.listen(PORT , ()=>{
     console.log(`Server is running on http://localhost:${PORT}`);
