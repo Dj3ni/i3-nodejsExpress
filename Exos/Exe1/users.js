@@ -51,17 +51,37 @@ router.post("/", (req,res)=>{
 router.put("/:id([0-9]+)",(req, res)=>{
     const {email, name, lastname} = req.body;
     const {id} = req.params;
+    const user = users.find(u=>u.id === +id)
 
-        const user = users.find(u=>u.id === +id)
     if(user){
         if(users.find(u=>u.id !== +id && u.email !== email)){
-            user = {name:name, lastname :lastname , email:email}
+            user.name = name;
+            user.lastname = lastname;
+            user.email = email;
         }
     }
     return res.status(200).json(user);
 })
 
+// Delete
 
+router.delete('/:id([0-9]+)', (req, res) =>{
+    const {id} = req.params;
+    const userId = users.find(u=>u.id === +id)
+    if(userId){
+        console.log(userId);
+        users.splice(userId, 1);
+        res.sendStatus(200);
+    }
+    else{
+        return res.status(404).json({
+            code: 404,
+            error: "Not Found",
+            message: "Id non trouvé",
+            targetId: id,
+        });
+    }
+})
 
 
 module.exports = router;

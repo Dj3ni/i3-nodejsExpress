@@ -97,7 +97,7 @@ router.delete("tasks/:id", (req,res)=>{
 })
 
 //Patch
-router.delete("tasks/:id", (req,res)=>{
+router.patch("tasks/:id", (req,res)=>{
 
     const { id } = req.params;
     const { title, completed } = req.body;
