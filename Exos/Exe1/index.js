@@ -1,9 +1,10 @@
 const express = require('express');
-const router  = require('./users');
+const router  = require('./routes/users.router');
 
 const app = express();
 const PORT = 3000;
 
+//Permet de récupérer les données du Bodu en Json
 app.use(express.json());
 app.use("/users", router)
 

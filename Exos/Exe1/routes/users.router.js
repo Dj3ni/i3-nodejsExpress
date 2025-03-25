@@ -1,20 +1,18 @@
-const router = require ("express").Router();
+const userRouter = require ("express").Router();
 
 const users = [
-    { id : 1, name : "Jenny", lastname: "Fernandez Garcia", email : "j.garcia@interface3.be"},
+    {id : 1, name : "Jenny", lastname: "Fernandez Garcia", email : "j.garcia@interface3.be"},
     {id : 2, name : "Dorothée", lastname:"Valentyn",email : "d.valentyn@interface3.be"},
     {id : 3, name : "Mélusine", lastname:"Christophe", email : "m.christophe@interface3.be"}
 ];
 
 //GET users/
-router.get("/", (req,res)=>{
+userRouter.get("/", (req,res)=>{
     res.status(200).json(users);
 })
 
 // GET users/id
-
-
-router.get("/:id([0-9]+)", (req,res)=>{
+userRouter.get("/:id([0-9]+)", (req,res)=>{
     const{id} = req.params;
     const user  = users.find(u=>u.id === +id)
 
@@ -29,29 +27,54 @@ router.get("/:id([0-9]+)", (req,res)=>{
 })
 
 // POST
-userId = users.length;
+let userId = users.length;
 
-router.post("/", (req,res)=>{
+userRouter.post("/", (req,res)=>{
     const {name, lastname, email} = req.body;
+    if(!name || !lastname || !email){
+        return res.status(400).json({
+            Code: 400,
+            error: "Bad Request", 
+            message : "name, lastname and email are required!",
+            origin : email
+        })
+    }
 
-    if(users.find(u=>u.email === email)){
+    if(users.some(u=>u.email === email)){ // some plutôt que find car retourne un bool au lieu d'un objet, plus léger
         return res.status(400).json({
             Code: 400, 
-                error: "Bad Request", 
-                message : "Email already in use",
-                origin : email
+            error: "Bad Request", 
+            message : "Email already in use",
+            origin : email
         })
     }
     const user = {id: ++userId, name : name, lastname: lastname, email:email};
     users.push(user);
-    return res.status(200).json(user);
+    return res.status(201).json(user);
 })
 
 // PUT
-router.put("/:id([0-9]+)",(req, res)=>{
+userRouter.put("/:id([0-9]+)",(req, res)=>{
     const {email, name, lastname} = req.body;
     const {id} = req.params;
     const user = users.find(u=>u.id === +id)
+
+    if(!name || !lastname || !email){
+        return res.status(400).json({
+            Code: 400,
+            error: "Bad Request", 
+            message : "name, lastname and email are required!",
+            origin : email
+        })
+    }
+    if(!user){
+        return res.status(400).json({
+            Code: 404,
+            error: "Bad Request", 
+            message : "Id introuvable",
+            origin : id
+        })
+    }
 
     if(user){
         if(users.find(u=>u.id !== +id && u.email !== email)){
@@ -64,12 +87,10 @@ router.put("/:id([0-9]+)",(req, res)=>{
 })
 
 // Delete
-
-router.delete('/:id([0-9]+)', (req, res) =>{
+userRouter.delete('/:id([0-9]+)', (req, res) =>{
     const {id} = req.params;
-    const userId = users.find(u=>u.id === +id)
+    const userId = users.findIndex(u=>u.id === +id)
     if(userId){
-        console.log(userId);
         users.splice(userId, 1);
         res.sendStatus(200);
     }
@@ -84,4 +105,4 @@ router.delete('/:id([0-9]+)', (req, res) =>{
 })
 
 
-module.exports = router;
+module.exports = userRouter;
