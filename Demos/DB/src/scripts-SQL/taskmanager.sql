@@ -22,7 +22,7 @@ GO
 CREATE TABLE 
     [User](
         [Id] UNIQUEIDENTIFIER,
-        [Email] NVARCHAR(MAX) NOT NULL,
+        [Email] NVARCHAR(300) NOT NULL,
         [Password] VARBINARY(MAX) NOT NULL,
         CONSTRAINT PK_User Primary Key([Id]),
         CONSTRAINT UK_Email UNIQUE ([Email])
