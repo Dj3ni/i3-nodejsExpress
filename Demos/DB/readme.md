@@ -57,6 +57,7 @@ Ces dépendances incluent:
 ```
 
 6. Création du user01 dans SSMS
+
 Dans Databases, connection/logins: click droit et new login
 - Général
     - user01
