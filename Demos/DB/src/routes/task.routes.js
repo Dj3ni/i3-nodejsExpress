@@ -14,9 +14,13 @@ router.post('/', taskController.create);
 
 router.get('/', taskController.findAll);
 
-router.get('/:id', taskController.findById);
+router.get('/:id', isTaskOwner, taskController.findById);
 
 router.put('/:id', isTaskOwner, taskController.update);
+
+router.patch('/:id/toggle', isTaskOwner, taskController.toggleStatus)
+
+router.delete('/:id', isTaskOwner, taskController.delete);
 
 //Export du module
 module.exports = router;

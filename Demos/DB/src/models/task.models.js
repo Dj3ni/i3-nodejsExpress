@@ -36,7 +36,7 @@ class Task {
 
     static async findByUserId(userId){
         try {
-            
+
             await pool.connect();
              // Création requête
                 const request = pool.request();
@@ -62,6 +62,74 @@ class Task {
             const command= `SELECT (Id,Title,IsDone) FROM [TASK] Where [ID] = @id`
             const result = await request.query(command)
 
+            return result.recordset[0];
+
+        } catch (error) {
+            console.log(error.message);
+            throw new Error('Erreur lors de la recherche par Id de la tâche')
+
+        }
+    }
+
+    static async update(id, task){
+        try {
+            
+            await pool.connect();
+            const request = pool.request();
+            request.input('id', sql.UniqueIdentifier, id)
+            request.input('title', sql.NVarChar, task.title)
+            request.input('isDone', sql.Bit, task.isDone)
+
+            const command= `
+            Update [Task] Set [Title] = @title, [IsDone] = @isDone Where [ID] = @id; 
+            SELECT (Id,Title,IsDone) FROM [TASK] Where [ID] = @id;`;
+            const result = await request.query(command)
+
+            return result.recordset[0];
+
+        } catch (error) {
+            console.log(error.message);
+            throw new Error('Erreur lors de la recherche par Id de la tâche')
+
+        }
+    }
+
+    static async delete(id){
+        try {
+            await pool.connect();
+            const request = pool.request();
+            request.input('id', sql.UniqueIdentifier, id)
+
+            const command= `
+            Delete From [Task] Where [ID] = @id;`;
+            
+            return await request.query(command)
+
+            //return {message: "Tâche supprimée avec succès"}
+            
+        } catch (error) {
+            console.log(error.message);
+            throw new Error('Erreur lors de la suppression de la tâche')
+        }
+    }
+
+    static async toggleStatus(id){
+        try {
+            
+            await pool.connect();
+            const task = await this.findById(id);
+            if(!task) throw new Error('Tâche non trouvée')
+
+            const request = pool.request();
+            request.input('id', sql.UniqueIdentifier, id)
+            request.input('title', sql.NVarChar, task.title)
+            request.input('isDone', sql.Bit, task.isDone)
+
+            const command= `
+            Update [Task] Set [IsDone] = @isDone Where [ID] = @id; 
+            SELECT (Id,Title,IsDone) FROM [TASK] Where [ID] = @id;`;
+            
+            const result = await request.query(command)
             return result.recordset[0];
 
         } catch (error) {
